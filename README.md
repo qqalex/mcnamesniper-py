@@ -1,2 +1,2 @@
 # sniper
-Advanced, Threaded, Proxy-Supporting, Minecraft Name Sniper
+Threaded, Proxy-Supporting, Minecraft Name Sniper
