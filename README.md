@@ -1,6 +1,5 @@
-# Minecraft Name Sniper
-
-##### Designed to snipe names without knowing exactly when the name will drop.
+## Minecraft Name Sniper
+Designed to snipe names without knowing exactly when the name will drop.
 
 
 ## Performance
