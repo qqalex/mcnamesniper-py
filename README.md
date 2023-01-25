@@ -1,6 +1,6 @@
 # Minecraft Name Sniper
 
-### Designed to snipe names without knowing exactly when the name will drop.
+#### Designed to snipe names without knowing exactly when the name will drop.
 
 
 ## Performance
@@ -13,4 +13,4 @@
 - Gamepass Accounts
 
 ## Language
-Written entirely in Python.
+#### Written entirely in Python.
