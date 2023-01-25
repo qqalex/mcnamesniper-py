@@ -13,4 +13,4 @@
 - Gamepass Accounts
 
 ## Language
-##### Written entirely in Python.
+Written in Python.
