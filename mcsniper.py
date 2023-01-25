@@ -1,56 +1,59 @@
-import requests                                              # Needed for making requests in Python
-import concurrent.futures                                    # Needed for making threaded requests
-from requests.structures import CaseInsensitiveDict          # Needed for defining request header
-
-import pause                                                 # Needed for running at specific unix times
-                                                             # I should write my own pause, because it's really easy, and I won't have to rely on this package
+import requests_async as requests
+import asyncio
+import pause
 
 class FoxSniper:
 
-    def __init__(self, dropTime, threads, proxies= None):
+    def __init__(self, dropTime, proxies= None):
 
         # Request info
-        self.nameChangeEndpoint = "https://api.minecraftservices.com/minecraft/profile/name/"               # https://api.minecraftservices.com/minecraft/profile/name/{username}
+        self.nameChangeEndpoint = 'https://api.minecraftservices.com/minecraft/profile/name/'
+        self.createProfileEndpoint = 'https://api.minecraftservices.com/minecraft/profile/'
         self.authHeader = None
-        self.drop_time = dropTime                                                                           # Unix time when to start sending namechange requests
+        self.drop_time = dropTime
 
         # Proxy information
         self.proxies = proxies
 
-        # Threads
-        self.threadNum = threads
-
         # Timings
-        self.adjustment = -3
+        self.adjustment = -2
 
     def __defAuthHeader(self, token):
 
-        self.authHeader = CaseInsensitiveDict()
-        self.authHeader["Authorization"] = f"Bearer {token}"
+        self.authHeader = {
+            "Authorization": "Bearer " + token,
+            "Content-Type": "application/json"
+        }
 
-    def __nameChangeRequest(self, username):
+    async def __nameChangeRequest(self, username):
 
         if self.proxies is None:
-            request = requests.put(f'{self.nameChangeEndpoint}{username}', headers= self.authHeader)
-            return request
+            if self.gamepassAccount is not None:
+                return await requests.post(self.createProfileEndpoint, headers= self.authHeader, json= {"profileName": username})
+            else:
+                return await requests.put(self.nameChangeEndpoint + username, headers= self.authHeader)
 
         else:
-            request = requests.put(f'{self.nameChangeEndpoint}{username}', headers= self.authHeader, proxies= self.proxies)
-            return request
+            if self.gamepassAccount is not None:
+                return await requests.post(self.createProfileEndpoint, headers= self.authHeader, json= {"profileName": username})
+            else:
+                return await requests.put(self.nameChangeEndpoint + username, headers= self.authHeader, proxies= self.proxies)
 
-    def __run(self, username):
+    async def __snipeLoop(self, username):
+        while True:
+            response = await self.__nameChangeRequest(username)
+            if response.status_code == 200:
+                print(f'Successfully sniped {username}')
+            else:
+                print(response.status_code)
 
-        nameChangeRequest = self.__nameChangeRequest(username)
+    def snipe(self, username, token, gamepassAccount= None):
+        self.gamepassAccount = gamepassAccount
 
-        print(nameChangeRequest.status_code)
-        if nameChangeRequest.status_code == 200:
-            print(nameChangeRequest.content)
+        self.__defAuthHeader(token)
 
-    def snipe(self, username, token):
+        pause.until(self.drop_time + self.adjustment)
 
-        self.__defAuthHeader(token)                                         # Define the request Authorization header
-
-        pause.until(self.drop_time + self.adjustment)                       # Pause until username droptime + adjustment
-
-        with concurrent.futures.ProcessPoolExecutor(max_workers= self.threadNum) as executor:
-            executor.submit(self.__run(username))
+        loop = asyncio.get_event_loop()
+        loop.run_until_complete(self.__snipeLoop(username))
+        loop.close()
