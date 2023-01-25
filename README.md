@@ -3,7 +3,6 @@
 Designed to snipe names without knowing exactly when the name will drop.
 
 
-
 ## Performance
 - Asynchronous
 - Multiple accounts
