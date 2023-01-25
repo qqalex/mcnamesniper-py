@@ -2,8 +2,6 @@
 
 Designed to snipe names even without knowing exactly when the name will drop.
 
-# Support
-
 ## Performance
 - Asynchronous
 - Proxy
@@ -12,5 +10,5 @@ Designed to snipe names even without knowing exactly when the name will drop.
 - Minecraft Accounts
 - Gamepass Accounts
 
-# Language
+## Language
 Written entirely in Python.
