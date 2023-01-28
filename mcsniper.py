@@ -2,7 +2,7 @@ import requests_async as requests
 import asyncio
 import pause
 
-class FoxSniper:
+class NameSniper:
 
     def __init__(self, dropTime, proxies= None):
 
@@ -29,15 +29,19 @@ class FoxSniper:
 
         if self.proxies is None:
             if self.gamepassAccount is not None:
-                return await requests.post(self.createProfileEndpoint, headers= self.authHeader, json= {"profileName": username})
+                return await requests.post(self.createProfileEndpoint, headers= self.authHeader, json= {"profileName": username}, proxies= self.proxies)
             else:
-                return await requests.put(self.nameChangeEndpoint + username, headers= self.authHeader)
+                return await requests.put(self.nameChangeEndpoint + username, headers= self.authHeader, proxies= self.proxies, verify = False)
 
         else:
             if self.gamepassAccount is not None:
-                return await requests.post(self.createProfileEndpoint, headers= self.authHeader, json= {"profileName": username})
+                print(self.createProfileEndpoint)
+                print(self.authHeader)
+                print(username)
+                print(self.proxies)
+                return await requests.post(self.createProfileEndpoint, headers= self.authHeader, json= {"profileName": username}, proxies= self.proxies)
             else:
-                return await requests.put(self.nameChangeEndpoint + username, headers= self.authHeader, proxies= self.proxies)
+                return await requests.put(self.nameChangeEndpoint + username, headers= self.authHeader, proxies= self.proxies, verify = False)
 
     async def __snipeLoop(self, username):
         while True:
@@ -45,6 +49,7 @@ class FoxSniper:
             if response.status_code == 200:
                 print(f'Successfully sniped {username}')
             else:
+                print(response.text)
                 print(response.status_code)
 
     def snipe(self, username, token, gamepassAccount= None):
