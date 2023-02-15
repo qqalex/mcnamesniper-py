@@ -1,4 +1,6 @@
-import mcsniper
+from Sniper import nameSniper
+from Sniper import credentials
+import pause
 
 # Account tokens
 bearerTokens = [
@@ -14,9 +16,10 @@ bearerTokens = [
     'eyJraWQiOiJhYzg0YSIsImFsZyI6IkhTMjU2In0.eyJ4dWlkIjoiMjUzNTQxODM2NzYxODI3OCIsImFnZyI6IkFkdWx0Iiwic3ViIjoiYzM1ZTg5NjUtYzEwYy00OWY0LTkwYjEtNWZlZDk2ZDMwMjUxIiwibmJmIjoxNjc0OTAzNzgzLCJhdXRoIjoiWEJPWCIsInJvbGVzIjpbXSwiaXNzIjoiYXV0aGVudGljYXRpb24iLCJleHAiOjE2NzQ5OTAxODMsImlhdCI6MTY3NDkwMzc4MywicGxhdGZvcm0iOiJVTktOT1dOIiwieXVpZCI6ImU4ZTJkNmQyMThkNzBmZjE0ZDdkMWY5M2U4M2FmN2I5In0.68gbOV6Xzva8zLEUhKtrqRwmBs0jHBmwKkX0TnYvSac'
 ]
 
-# Proxy credentials
-proxy = {'http':'minecat:5d86f4-e1a8a9-a211fd-5f7e38-23741a@usa.rotating.proxyrack.net:9000'}
+auth = credentials()
+sniper = nameSniper(1674454282, auth.proxy)
 
-sniper = mcsniper.NameSniper(1674454282, proxy)
-
-sniper.snipe("Alex", bearerTokens[0], gamepassAccount=True)
+async def snipe_gamepass_list():
+    pause()
+    for i in bearerTokens:
+        await sniper.snipe("Alex", i, gamepassAccount=True)
