@@ -111,15 +111,14 @@ class data:
         def addProfile(self, username):
             index = self.__head
 
-            while index is not None:
+            if index is None:
+                self.__head.profileObject = data.linkedList(data.profile(username))
+                return 0
+
+            while index.next is not None:
                 index = index.next
-            else:
-                if index is None:
-                    self.__head.profileObject = data.linkedList(data.profile(username))
-                    return 0
-                elif index.next is None:
-                    index.next = data.linkedList(data.profile(username))
-                    return 0
+            index.next = data.linkedList(data.profile(username))
+            return 0
 
         def getProfile(self, username):
             index = self.__head
@@ -128,34 +127,40 @@ class data:
                 if index.profileObject.username == username:
                     return index.profileObject
                 elif index.next == None:
-                    return False
+                    return None
                 else:
                     index = index.next
 
         def setUUID(self, username, uuid): # Set the UUID of a profile in a LL; find the profile with a given username
             profile = self.getProfile(username)
-            profile.uuid = uuid
+            if profile is not None:
+                profile.uuid = uuid
 
         def getUUID(self, username): # Get the UUID of a profile in a LL; find the profile with a given username
             profile = self.getProfile(username)
-            return profile.uuid
+            if profile is not None:
+                return profile.uuid
 
         def setStatus(self, username, status, time): # Set the most recent API status of profile in LL
             profile = self.getProfile(username)
-            profile.status = status
-            profile.lastStatusTime = time
+            if profile is not None:
+                profile.status = status
+                profile.lastStatusTime = time
 
         def getStatus(self, username): # Get the most recent API status of profile in LL
             profile = self.getProfile(username)
-            return profile.status
+            if profile is not None:
+                return profile.status
 
         def toggleIgnore(self, username): # Set the boolean of whether to ignore a profile in LL
             profile = self.getProfile(username)
-            profile.ignore = not profile.ignore
+            if profile is not None:
+                profile.ignore = not profile.ignore
 
         def getIgnore(self, username): # Get the boolean of whether to ignore a profile in LL
             profile = self.getProfile(username)
-            return profile.ignore
+            if profile is not None:
+                return profile.ignore
 
 class credentials:
 
