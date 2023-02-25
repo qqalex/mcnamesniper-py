@@ -7,23 +7,19 @@ import asyncio
 import aiohttp
 import pause                        
 
-#################################################################################
-#                                                                               #
-#                                                                               #
-#   ROADMAP (in order of importance)                                            #
-#                                                                               #
-#   - Write a DataBase for managing profiles.                                   #
-#   - Sniper needs a rewrite to work asynchronously.. with proxies.             #
-#   - Remove worthless / shit names from watchdog list.                         #
-#   - Proper database for dropping usernames.                                   #
-#   - - Integrate DogBot with such drop name database.                          #
-#   - Write my own pause instead of using an import.                            #
-#   - Fix hardcoded credentials, basically rewrite credentials class entirely.  #
-#                                                                               #
-#                                                                               #
-#                                                                               #
-#################################################################################
-
+#####################################################################################
+#                                                                                   #
+#                       ROADMAP (in order of importance)                            #
+#                                                                                   #
+#   - Write a DataBase for managing profiles.                                       #
+#   - Sniper needs a rewrite to work asynchronously.. with proxies.                 #
+#   - Remove worthless / shit names from watchdog list.                             #
+#   - Proper database for dropping usernames.                                       #
+#   - - - Integrate DogBot with such drop name database.                            #
+#   - Write my own pause instead of using an import.                                #
+#   - Fix hardcoded credentials, basically rewrite credentials class entirely.      #
+#                                                                                   #
+#####################################################################################
 
 class bcolors:
 	ResetAll = "\033[0m"
@@ -78,7 +74,7 @@ class bcolors:
 	BackgroundLightCyan    = "\033[106m"
 	BackgroundWhite        = "\033[107m"
 
-class data:
+class database:
 
     class linkedList:
 
@@ -112,12 +108,12 @@ class data:
             index = self.__head
 
             if index is None:
-                self.__head.profileObject = data.linkedList(data.profile(username))
+                self.__head.profileObject = database.linkedList(database.profile(username))
                 return 0
 
             while index.next is not None:
                 index = index.next
-            index.next = data.linkedList(data.profile(username))
+            index.next = database.linkedList(database.profile(username))
             return 0
 
         def getProfile(self, username):
