@@ -5,7 +5,8 @@ import asyncio
 
 # Independent Packages
 import aiohttp
-import pause                        
+import pause
+import json                        
 
 #####################################################################################
 #                                                                                   #
@@ -108,18 +109,34 @@ class database:
             index = self.__head
 
             if index is None:
-                self.__head.profileObject = database.linkedList(database.profile(username))
+                self.__head = database.linkedList(database.profile(username))
                 return 0
 
             while index.next is not None:
                 index = index.next
             index.next = database.linkedList(database.profile(username))
             return 0
+        
+        def setUUID(self, username, uuid): # Set the UUID of a profile in a LL; find the profile with a given username
+            profile = self.__getProfile(username)
+            if profile is not None:
+                profile.uuid = uuid
 
-        def getProfile(self, username):
+        def setStatus(self, username, status, time): # Set the most recent API status of profile in LL
+            profile = self.__getProfile(username)
+            if profile is not None:
+                profile.status = status
+                profile.lastStatusTime = time
+
+        def toggleIgnore(self, username): # Set the boolean of whether to ignore a profile in LL
+            profile = self.__getProfile(username)
+            if profile is not None:
+                profile.ignore = not profile.ignore
+
+        def __getProfile(self, username): # Get profile object
             index = self.__head
 
-            while True:
+            while index is not None:
                 if index.profileObject.username == username:
                     return index.profileObject
                 elif index.next == None:
@@ -127,36 +144,35 @@ class database:
                 else:
                     index = index.next
 
-        def setUUID(self, username, uuid): # Set the UUID of a profile in a LL; find the profile with a given username
-            profile = self.getProfile(username)
+        def getUsername(self, username): # Get username variable
+            profile = self.__getProfile(username)
             if profile is not None:
-                profile.uuid = uuid
-
+                return profile.username
+            return profile
+            
         def getUUID(self, username): # Get the UUID of a profile in a LL; find the profile with a given username
-            profile = self.getProfile(username)
+            profile = self.__getProfile(username)
             if profile is not None:
                 return profile.uuid
-
-        def setStatus(self, username, status, time): # Set the most recent API status of profile in LL
-            profile = self.getProfile(username)
-            if profile is not None:
-                profile.status = status
-                profile.lastStatusTime = time
-
+            return profile
+            
         def getStatus(self, username): # Get the most recent API status of profile in LL
-            profile = self.getProfile(username)
+            profile = self.__getProfile(username)
             if profile is not None:
                 return profile.status
-
-        def toggleIgnore(self, username): # Set the boolean of whether to ignore a profile in LL
-            profile = self.getProfile(username)
+            return profile
+            
+        def getLastStatusUpdate(self, username):
+            profile = self.__getProfile(username)
             if profile is not None:
-                profile.ignore = not profile.ignore
-
+                return profile.lastStatusTime
+            return profile
+            
         def getIgnore(self, username): # Get the boolean of whether to ignore a profile in LL
-            profile = self.getProfile(username)
+            profile = self.__getProfile(username)
             if profile is not None:
                 return profile.ignore
+            return profile
 
 class credentials:
 
@@ -298,28 +314,41 @@ class listener:
         self.proxies = credentials().proxy
         self.nameChangeStartRange = None
         self.nameChangeEndRange = None
+        self.success = 0
+        self.failed = 0
 
     async def __requestCurrentUUID(self, username):
         async with aiohttp.ClientSession(timeout= aiohttp.ClientTimeout(total=1)) as session:
             async with session.get(f'{self.uuidEndpoint}{username}', proxy=self.proxies) as response:
-                return response
+                response_data = await response.read()
+                response.close()
+                return response, response_data
 
     
     async def check(self, username):
 
-        response = await self.__requestCurrentUUID(username)
+        response, response_data = await self.__requestCurrentUUID(username)
 
         self.nameChangeEndRange = time.time()
 
         if response.status == 200: # Success
+            self.success += 1
             print(f'{bcolors.Green}{response.status} {username}{bcolors.ResetAll}', end='')
+
+            print(json.loads(response_data.decode())['id'])
+            print(f'S:{self.success} F:{self.failed}')
+            print('\n')
+
+            return response.status, json.loads(response_data.decode())['id'], self.nameChangeEndRange
         elif response.status == 404: # Name is in uncache limbo
             print(f'{bcolors.Green}{bcolors.Blink}{bcolors.BackgroundLightMagenta}{response.status} {username}{bcolors.ResetAll}', end='')
             info = f'{username}\n{self.nameChangeEndRange}'
             open(f'{username}_droptime.txt','w').write(info)
-        elif response.status == 204: # Name is in limbo
+        elif response.status == 204: # Name is 'locked'
+            self.success += 1
             print(f'{bcolors.Magenta}{response.status} {username}{bcolors.ResetAll}', end='')
         elif response.status == 403: # Error
+            self.failed += 1
             print(f'{bcolors.Red}{response.status} {username}{bcolors.ResetAll}', end='')
-        else: # Blanket else case, incase there is any I missed.
-            print(f'{bcolors.Red}{bcolors.Blink}{bcolors.BackgroundLightRed}{response.status} {username}{bcolors.ResetAll}', end='')
+        
+        return response.status, None, self.nameChangeEndRange
