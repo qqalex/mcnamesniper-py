@@ -19,6 +19,7 @@ async def check_asyncio(username):
 
         if status_code is not None:
 
+            print('check')
             if status_code == 204 and db.getStatus() == 200:
                 info = f'{username}\n{db.getLastStatusUpdate}\n{status_time}'
                 open(f'{username}_droptime.txt','w').write(info)
