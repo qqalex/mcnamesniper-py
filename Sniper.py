@@ -333,15 +333,13 @@ class listener:
 
         if response.status == 200: # Success
             self.success += 1
-            print(f'{bcolors.Green}{response.status} {username}{bcolors.ResetAll}', end='')
+            print(f'{bcolors.Green}{response.status} {username} {bcolors.ResetAll}', end='')
 
-            print(json.loads(response_data.decode())['id'])
-            print(f'S:{self.success} F:{self.failed}')
-            print('\n')
+            print(json.loads(response_data.decode())['id'], end='')
 
             return response.status, json.loads(response_data.decode())['id'], self.nameChangeEndRange
         elif response.status == 404: # Name is in uncache limbo
-            print(f'{bcolors.Green}{bcolors.Blink}{bcolors.BackgroundLightMagenta}{response.status} {username}{bcolors.ResetAll}', end='')
+            print(f'{bcolors.Green}{bcolors.Blink}{bcolors.BackgroundLightMagenta}{response.status}{username} {bcolors.ResetAll}', end='')
             info = f'{username}\n{self.nameChangeEndRange}'
             open(f'{username}_droptime.txt','w').write(info)
         elif response.status == 204: # Name is 'locked'
