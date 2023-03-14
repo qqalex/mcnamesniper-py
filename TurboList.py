@@ -1,8 +1,5 @@
 from Sniper import listener, database
 import asyncio
-import os
-
-os.system("title " + "Small's Private Turbo")
 
 checker = listener()
 db = database.manage()
@@ -21,11 +18,13 @@ async def check_asyncio(user):
         status_code, response_uuid, status_time = await checker.check(user)
 
         if status_code is not None:
-            print(f' {db.getStatus(username=user)}')
 
             if status_code == 204 and db.getStatus(username=user) == 200:
                 info = f'{user}\n{db.getLastStatusUpdate(username=user)}\n{status_time}'
-                open(f'{user}_droptime.txt','w').write(info)
+                file = open(f'{user}_droptime.txt','w')
+                file.write(info)
+                file.close()
+
             db.setStatus(username=user, status=status_code, time=status_time)
             db.setUUID(username=user, uuid=response_uuid)
     except Exception:
@@ -46,4 +45,3 @@ async def check_list():
 while True:
     print('Starting New List')
     asyncio.run(check_list())
-    

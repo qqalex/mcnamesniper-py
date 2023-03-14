@@ -128,10 +128,10 @@ class database:
                 profile.status = status
                 profile.lastStatusTime = time
 
-        def toggleIgnore(self, username): # Set the boolean of whether to ignore a profile in LL
+        def setIgnore(self, username, bool): # Set the boolean of whether to ignore a profile in LL
             profile = self.__getProfile(username)
             if profile is not None:
-                profile.ignore = not profile.ignore
+                profile.ignore = bool
 
         def __getProfile(self, username): # Get profile object
             index = self.__head
@@ -318,7 +318,7 @@ class listener:
         self.failed = 0
 
     async def __requestCurrentUUID(self, username):
-        async with aiohttp.ClientSession(timeout= aiohttp.ClientTimeout(total=1)) as session:
+        async with aiohttp.ClientSession(timeout= aiohttp.ClientTimeout(total=3)) as session:
             async with session.get(f'{self.uuidEndpoint}{username}', proxy=self.proxies) as response:
                 response_data = await response.read()
                 response.close()
@@ -333,20 +333,15 @@ class listener:
 
         if response.status == 200: # Success
             self.success += 1
-            print(f'{bcolors.Green}{response.status} {username} {bcolors.ResetAll}', end='')
+            uuid = json.loads(response_data.decode())["id"]
+            print(f'{bcolors.Green}{response.status} {username}{bcolors.ResetAll}\t{uuid}')
 
-            print(json.loads(response_data.decode())['id'], end='')
-
-            return response.status, json.loads(response_data.decode())['id'], self.nameChangeEndRange
-        elif response.status == 404: # Name is in uncache limbo
-            print(f'{bcolors.Green}{bcolors.Blink}{bcolors.BackgroundLightMagenta}{response.status}{username} {bcolors.ResetAll}', end='')
-            info = f'{username}\n{self.nameChangeEndRange}'
-            open(f'{username}_droptime.txt','w').write(info)
+            return response.status, uuid, self.nameChangeEndRange
         elif response.status == 204: # Name is 'locked'
             self.success += 1
-            print(f'{bcolors.Magenta}{response.status} {username}{bcolors.ResetAll}', end='')
+            print(f'{bcolors.Magenta}{response.status} {username}{bcolors.ResetAll}')
         elif response.status == 403: # Error
             self.failed += 1
-            print(f'{bcolors.Red}{response.status} {username}{bcolors.ResetAll}', end='')
+            print(f'{bcolors.Red}{response.status} {username}{bcolors.ResetAll}')
         
         return response.status, None, self.nameChangeEndRange
