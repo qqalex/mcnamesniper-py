@@ -6,4 +6,4 @@
 - Asynchronous
 - Catches dropping name times
 
-etc. etc. etc.
+## Not functional anymore
