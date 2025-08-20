@@ -2,6 +2,7 @@ from Sniper import namesniper
 import asyncio
 
 # Account tokens
+# Expired example tokens
 bearerTokens = [
     'eyJraWQiOiJhYzg0YSIsImFsZyI6IkhTMjU2In0.eyJ4dWlkIjoiMjUzNTQyOTY5MTU5NTc5MiIsImFnZyI6IkFkdWx0Iiwic3ViIjoiNTYwZDE2ODEtNjY0YS00NTZiLTgyM2QtYjdkOGI0MWUyNDA4IiwibmJmIjoxNjc0OTAyNjA3LCJhdXRoIjoiWEJPWCIsInJvbGVzIjpbXSwiaXNzIjoiYXV0aGVudGljYXRpb24iLCJleHAiOjE2NzQ5ODkwMDcsImlhdCI6MTY3NDkwMjYwNywicGxhdGZvcm0iOiJVTktOT1dOIiwieXVpZCI6ImJkYTY5ZTE3ZDM5MTlkYzZkYjE2NjdkZjYxODRlMTYxIn0.-0aDXd3aQJryzCuu-uiGJ0INoeVnufMmkCGBmWOk7cU',
     'eyJraWQiOiJhYzg0YSIsImFsZyI6IkhTMjU2In0.eyJ4dWlkIjoiMjUzNTQxODkxMDIxMDcxNCIsImFnZyI6IkFkdWx0Iiwic3ViIjoiZjlhNzcyNzctZDQzNy00MzRlLTkwZWEtZTUzOGUxOGU5MzM3IiwibmJmIjoxNjc0OTAyNjY2LCJhdXRoIjoiWEJPWCIsInJvbGVzIjpbXSwiaXNzIjoiYXV0aGVudGljYXRpb24iLCJleHAiOjE2NzQ5ODkwNjYsImlhdCI6MTY3NDkwMjY2NiwicGxhdGZvcm0iOiJVTktOT1dOIiwieXVpZCI6ImIzMjcwYmJiMmUwZTExMGYwMWZhYzU3MzY4YzVhMTM3In0.QfJkeGK4YnFvcwuzUa3BrGssOVWuRyCvN5F7s7fsclA',
@@ -20,5 +21,6 @@ sniper = namesniper(1674454282)
 async def snipe_gamepass_list():
     for i in bearerTokens:
         await sniper.snipe("Alex", i, gamepassAccount=True)
+
 
 asyncio.run(snipe_gamepass_list())
