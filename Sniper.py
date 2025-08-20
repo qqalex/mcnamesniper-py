@@ -14,7 +14,7 @@ import json
 #                                                                                   #
 #   - Write a DataBase for managing profiles.                                       #
 #   - Sniper needs a rewrite to work asynchronously.. with proxies.                 #
-#   - Remove worthless / shit names from watchdog list.                             #
+#   - Remove worthless names from watchdog list.                                    #
 #   - Proper database for dropping usernames.                                       #
 #   - - - Integrate DogBot with such drop name database.                            #
 #   - Write my own pause instead of using an import.                                #
