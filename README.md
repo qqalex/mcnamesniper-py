@@ -1,4 +1,4 @@
-# (Unsupported) Minecraft Name Sniper
+# mcnamesniper-py
 
 - Asynchronous
 - Catches dropping names over time interval
